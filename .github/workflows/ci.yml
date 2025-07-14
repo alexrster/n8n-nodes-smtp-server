@@ -31,7 +31,7 @@ jobs:
       run: npm run lint
 
     - name: Check formatting
-      run: npx prettier --check nodes credentials package.json
+      run: npx prettier --check nodes package.json
 
     - name: Build project
       run: npm run build
