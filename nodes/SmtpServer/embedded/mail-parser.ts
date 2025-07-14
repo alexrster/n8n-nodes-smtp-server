@@ -86,10 +86,12 @@ export function simpleParser(rawEmail: string): Promise<ParsedMail> {
 				subject: headers.subject || '',
 				to: parseAddresses(headers.to || ''),
 				from: parseAddresses(headers.from || ''),
-				date: headers.date ? (() => {
-				const date = new Date(headers.date);
-				return isNaN(date.getTime()) ? undefined : date;
-			})() : undefined,
+				date: headers.date
+					? (() => {
+							const date = new Date(headers.date);
+							return isNaN(date.getTime()) ? undefined : date;
+						})()
+					: undefined,
 				messageId: headers['message-id'] || '',
 				headers,
 				text: '',
@@ -189,11 +191,14 @@ function parseAddresses(addressString: string): AddressObject | AddressObject[] 
 	return addresses.length === 1 ? addresses[0] : addresses;
 }
 
-function parseMultipart(body: string, boundary: string): Array<{ headers: Record<string, string>; content: string }> {
+function parseMultipart(
+	body: string,
+	boundary: string,
+): Array<{ headers: Record<string, string>; content: string }> {
 	const parts: Array<{ headers: Record<string, string>; content: string }> = [];
 	const boundaryLine = '--' + boundary;
 
-		const sections = body.split(boundaryLine);
+	const sections = body.split(boundaryLine);
 
 	for (let i = 0; i < sections.length; i++) {
 		let section = sections[i];
@@ -246,7 +251,8 @@ function parseMultipart(body: string, boundary: string): Array<{ headers: Record
 			// Remove only a single trailing \r\n or \n if present
 			cleanContent = cleanContent.replace(/(\r\n|\n)$/, '');
 			// For attachments, remove all \r and \n characters for size and buffer
-			const isAttachment = headers['content-disposition'] && headers['content-disposition'].includes('attachment');
+			const isAttachment =
+				headers['content-disposition'] && headers['content-disposition'].includes('attachment');
 			if (isAttachment) {
 				let contentNoNewlines = cleanContent.replace(/[\r\n]/g, '');
 				contentNoNewlines = contentNoNewlines.trim();

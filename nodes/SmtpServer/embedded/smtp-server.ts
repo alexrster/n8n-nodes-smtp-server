@@ -6,7 +6,11 @@ export interface SMTPServerOptions {
 	secure?: boolean;
 	allowInsecureAuth?: boolean;
 	authOptional?: boolean;
-	onAuth?: (auth: { username: string; password: string }, session: any, callback: (error: Error | null, user?: any) => void) => void;
+	onAuth?: (
+		auth: { username: string; password: string },
+		session: any,
+		callback: (error: Error | null, user?: any) => void,
+	) => void;
 	onData?: (stream: Readable, session: any, callback: (error?: Error) => void) => void;
 }
 
