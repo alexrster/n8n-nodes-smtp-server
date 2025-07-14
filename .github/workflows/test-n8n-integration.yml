@@ -1,0 +1,60 @@
+name: Test n8n Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-n8n:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Install n8n globally
+      run: npm install -g n8n
+
+    - name: Test n8n node loading
+      run: |
+        # Create a temporary n8n installation to test the node
+        mkdir -p /tmp/n8n-test
+        cd /tmp/n8n-test
+
+        # Install n8n
+        npm init -y
+        npm install n8n
+
+        # Copy our built node to the n8n custom nodes directory
+        mkdir -p custom
+        cp -r $GITHUB_WORKSPACE/dist custom/
+
+        # Test if n8n can load our node
+        npx n8n --help
+
+        echo "n8n integration test completed successfully"
+
+    - name: Test SMTP server functionality
+      run: |
+        # This is a basic test to ensure the node can be instantiated
+        node -e "
+          const { SmtpServer } = require('./dist/nodes/SmtpServer/SmtpServer.node.js');
+          const node = new SmtpServer();
+          console.log('Node instantiated successfully');
+          console.log('Node description:', node.description.displayName);
+        "

@@ -1,48 +1,241 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# n8n SMTP Server Node
 
-# n8n-nodes-starter
+A custom n8n node that starts an SMTP server and triggers workflows when emails are received. This node allows you to receive emails directly into your n8n workflows, enabling powerful email automation scenarios.
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](https://n8n.io). It includes the node linter and other dependencies.
+## Features
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+- 🚀 **SMTP Server**: Starts a lightweight SMTP server to receive emails
+- 📧 **Email Parsing**: Automatically parses incoming emails with full metadata
+- 🔐 **Authentication**: Optional SMTP authentication support
+- 📎 **Attachment Support**: Handles email attachments with metadata
+- 🔄 **Workflow Triggers**: Triggers n8n workflows with parsed email data
+- 🛡️ **Security**: Configurable security options for production use
 
-If you would like your node to be available on n8n cloud you can also [submit your node for verification](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/).
+## Installation
 
-## Prerequisites
+### From npm (Recommended)
 
-You need the following installed on your development machine:
+```bash
+npm install n8n-nodes-smtp-server
+```
 
-* [git](https://git-scm.com/downloads)
-* Node.js and npm. Minimum version Node 20. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  npm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+### From Source
 
-## Using this starter
+```bash
+git clone https://github.com/alexrster/n8n-nodes-smtp-server.git
+cd n8n-nodes-smtp-server
+npm install
+npm run build
+```
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+## Usage
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `npm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `npm run lint` to check for errors or `npm run lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+### Basic Setup
 
-## More information
+1. **Add the node to your n8n instance:**
+   - If installed via npm: The node will appear automatically in the trigger nodes list
+   - If built from source: Copy the `dist` folder to your n8n custom nodes directory
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+2. **Configure the SMTP Server:**
+   - Set the port (default: 2525)
+   - Set the host (default: 0.0.0.0)
+   - Configure authentication if needed
+   - Set security options
+
+3. **Connect to your workflow:**
+   - The node will trigger your workflow whenever an email is received
+   - Email data is available in the workflow execution
+
+### Configuration Options
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **Port** | Number | 2525 | Port to listen on for SMTP connections |
+| **Host** | String | 0.0.0.0 | Host to bind the SMTP server to |
+| **Enable Authentication** | Boolean | false | Whether to enable SMTP authentication |
+| **Username** | String | - | Username for SMTP authentication |
+| **Password** | String | - | Password for SMTP authentication |
+| **Allow Insecure** | Boolean | true | Whether to allow insecure connections (no TLS) |
+
+### Email Data Structure
+
+When an email is received, the workflow is triggered with the following data structure:
+
+```json
+{
+  "subject": "Email Subject",
+  "to": "recipient@example.com",
+  "from": "sender@example.com",
+  "body": "Email body text",
+  "html": "<html>Email HTML content</html>",
+  "text": "Plain text email content",
+  "date": "2024-01-15T10:30:00.000Z",
+  "messageId": "<message-id@example.com>",
+  "attachments": [
+    {
+      "filename": "document.pdf",
+      "contentType": "application/pdf",
+      "size": 1024
+    }
+  ],
+  "headers": {
+    "received": "...",
+    "date": "...",
+    "from": "...",
+    "to": "...",
+    "subject": "..."
+  },
+  "raw": "Raw email content"
+}
+```
+
+## Use Cases
+
+### 1. Email Support Automation
+- Receive support emails and automatically create tickets
+- Route emails to different teams based on content
+- Auto-respond with confirmation messages
+
+### 2. Form Submissions
+- Receive form submissions via email
+- Process and store form data
+- Send confirmation emails
+
+### 3. Email Monitoring
+- Monitor specific email addresses for keywords
+- Trigger alerts based on email content
+- Archive important emails automatically
+
+### 4. Integration Workflows
+- Bridge email systems with other services
+- Convert emails to tasks, events, or notifications
+- Sync email data with databases or CRMs
+
+## Example Workflows
+
+### Basic Email Processing
+```
+SMTP Server → Email Parser → Database → Notification
+```
+
+### Support Ticket Creation
+```
+SMTP Server → Extract Email Data → Create Ticket → Send Confirmation
+```
+
+### Email Filtering
+```
+SMTP Server → Filter by Subject → Route to Different Teams → Archive
+```
+
+## Security Considerations
+
+### Production Deployment
+
+1. **Use Authentication**: Enable SMTP authentication in production
+2. **Configure Firewall**: Only allow connections from trusted sources
+3. **Use TLS**: Consider implementing TLS for encrypted connections
+4. **Monitor Logs**: Keep an eye on server logs for suspicious activity
+5. **Regular Updates**: Keep the node and dependencies updated
+
+### Network Configuration
+
+- **Internal Use**: Bind to localhost (127.0.0.1) for internal use only
+- **External Access**: Use proper firewall rules when exposing to the internet
+- **Port Selection**: Choose non-standard ports to avoid conflicts
+
+## Development
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- npm or yarn
+- n8n instance for testing
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/alexrster/n8n-nodes-smtp-server.git
+cd n8n-nodes-smtp-server
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Run linting
+npm run lint
+
+# Format code
+npm run format
+```
+
+### Testing
+
+```bash
+# Test the build
+npm run build
+
+# Test with n8n (requires n8n to be installed)
+npm install -g n8n
+npx n8n --help
+```
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Run linting and build
+6. Submit a pull request
+
+## Troubleshooting
+
+### Common Issues
+
+**Node not appearing in n8n:**
+- Ensure the node is properly built (`npm run build`)
+- Check that the `dist` folder is in the correct location
+- Restart n8n after adding the node
+
+**SMTP Server not starting:**
+- Check if the port is already in use
+- Verify firewall settings
+- Ensure proper permissions
+
+**Authentication issues:**
+- Verify username and password are correct
+- Check that authentication is enabled
+- Test with a simple SMTP client
+
+**Email parsing errors:**
+- Check the email format
+- Verify the email content is valid
+- Review server logs for details
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/alexrster/n8n-nodes-smtp-server/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/alexrster/n8n-nodes-smtp-server/discussions)
+- **Email**: a@qx.zone
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+
+## Acknowledgments
+
+- Built for the n8n community
+- Uses [smtp-server](https://github.com/nodemailer/smtp-server) for SMTP functionality
+- Uses [mailparser](https://github.com/nodemailer/mailparser) for email parsing
