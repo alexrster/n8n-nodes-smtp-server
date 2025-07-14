@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-smtp-server",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "SMTP Server Node for n8n",
 	"keywords": [
 		"n8n-community-node-package",
@@ -27,6 +27,9 @@
 		"format": "prettier nodes --write",
 		"lint": "eslint nodes package.json",
 		"lintfix": "eslint nodes package.json --fix",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:coverage": "jest --coverage",
 		"prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes package.json"
 	},
 	"files": [
@@ -39,15 +42,17 @@
 		]
 	},
 	"devDependencies": {
+		"@types/jest": "^30.0.0",
 		"@typescript-eslint/parser": "~8.32.0",
 		"eslint": "^8.57.0",
 		"eslint-plugin-n8n-nodes-base": "^1.16.3",
 		"gulp": "^5.0.0",
+		"jest": "^30.0.4",
 		"prettier": "^3.5.3",
+		"ts-jest": "^29.4.0",
 		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
-	},
-	"dependencies": {}
+	}
 }
