@@ -127,18 +127,23 @@ export class SmtpServer implements INodeType {
 						// Extract the required properties
 						const emailData = {
 							subject: parsed.subject || '',
-							to: Array.isArray(parsed.to) ? parsed.to.map(addr => addr.text).join(', ') : parsed.to?.text || '',
-							from: Array.isArray(parsed.from) ? parsed.from.map(addr => addr.text).join(', ') : parsed.from?.text || '',
+							to: Array.isArray(parsed.to)
+								? parsed.to.map((addr) => addr.text).join(', ')
+								: parsed.to?.text || '',
+							from: Array.isArray(parsed.from)
+								? parsed.from.map((addr) => addr.text).join(', ')
+								: parsed.from?.text || '',
 							body: parsed.text || parsed.html || '',
 							html: parsed.html || '',
 							text: parsed.text || '',
 							date: parsed.date,
 							messageId: parsed.messageId,
-							attachments: parsed.attachments?.map(attachment => ({
-								filename: attachment.filename,
-								contentType: attachment.contentType,
-								size: attachment.size,
-							})) || [],
+							attachments:
+								parsed.attachments?.map((attachment) => ({
+									filename: attachment.filename,
+									contentType: attachment.contentType,
+									size: attachment.size,
+								})) || [],
 							headers: parsed.headers,
 							raw: mailData,
 						};
@@ -190,6 +195,4 @@ export class SmtpServer implements INodeType {
 			closeFunction: closeServer,
 		};
 	}
-
-
 }
