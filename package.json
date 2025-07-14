@@ -49,10 +49,5 @@
 	"peerDependencies": {
 		"n8n-workflow": "*"
 	},
-	"dependencies": {
-		"@types/mailparser": "^3.4.6",
-		"@types/smtp-server": "^3.5.10",
-		"mailparser": "^3.7.4",
-		"smtp-server": "^3.14.0"
-	}
+	"dependencies": {}
 }

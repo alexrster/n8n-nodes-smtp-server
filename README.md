@@ -224,6 +224,17 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
+## Dependencies
+
+This node uses external dependencies (`smtp-server` and `mailparser`) that are essential for its core functionality. These dependencies are:
+
+- **Well-maintained** by the Nodemailer team
+- **Widely used** in production environments
+- **Security audited** with no known critical vulnerabilities
+- **Industry standard** for SMTP and email parsing
+
+For detailed information about these dependencies and why they are necessary, see [DEPENDENCIES.md](DEPENDENCIES.md).
+
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/alexrster/n8n-nodes-smtp-server/issues)
