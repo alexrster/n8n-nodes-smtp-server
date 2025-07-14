@@ -80,8 +80,4 @@ jobs:
 
     - name: Check for known vulnerabilities
       run: |
-        if npm audit --audit-level=high; then
-          echo "High severity vulnerabilities found!"
-          exit 1
-        fi
-        echo "No high severity vulnerabilities found"
+        npm audit --audit-level=high; if [ $? -ne 0 ]; then echo "High severity vulnerabilities found"; exit 1; fi
