@@ -143,9 +143,9 @@ export class SmtpServer implements INodeType {
 									filename: attachment.filename,
 									contentType: attachment.contentType,
 									size: attachment.size,
+									attachment: attachment.content,
 								})) || [],
 							headers: parsed.headers,
-							raw: mailData,
 						};
 
 						// Trigger the workflow with the email data
