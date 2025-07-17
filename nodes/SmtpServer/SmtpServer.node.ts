@@ -6,10 +6,10 @@ import type {
 	ITriggerResponse,
 } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
-import { SMTPServer } from './embedded/smtp-server';
-import { simpleParser } from './embedded/mail-parser';
-import type { SMTPServerSession } from './embedded/smtp-server';
-import type { ParsedMail } from './embedded/mail-parser';
+import { SMTPServer } from 'smtp-server';
+import { simpleParser } from 'mailparser';
+import type { SMTPServerDataStream, SMTPServerSession } from 'smtp-server';
+import type { ParsedMail } from 'mailparser';
 
 export class SmtpServer implements INodeType {
 	description: INodeTypeDescription = {
@@ -112,16 +112,16 @@ export class SmtpServer implements INodeType {
 					callback(new Error('Invalid username or password'));
 				}
 			},
-			onData(stream: any, session: SMTPServerSession, callback) {
+			onData(stream: SMTPServerDataStream, session: SMTPServerSession, callback) {
 				let mailData = '';
 
-				stream.on('data', (chunk: Buffer) => {
+				stream.on('data', (chunk) => {
 					mailData += chunk.toString();
 				});
 
 				stream.on('end', async () => {
 					try {
-						// Parse the email using our embedded parser
+						// Parse the email using mailparser
 						const parsed: ParsedMail = await simpleParser(mailData);
 
 						// Extract the required properties
@@ -143,7 +143,7 @@ export class SmtpServer implements INodeType {
 									filename: attachment.filename,
 									contentType: attachment.contentType,
 									size: attachment.size,
-									attachment: attachment.content,
+									content: attachment.content,
 								})) || [],
 							headers: parsed.headers,
 						};
@@ -157,7 +157,7 @@ export class SmtpServer implements INodeType {
 					callback();
 				});
 
-				stream.on('error', (error: Error) => {
+				stream.on('error', (error) => {
 					console.error('Stream error:', error);
 					callback(error);
 				});

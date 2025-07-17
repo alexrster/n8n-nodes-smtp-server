@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-smtp-server",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"description": "SMTP Server Node for n8n",
 	"keywords": [
 		"n8n-community-node-package",
@@ -54,5 +54,11 @@
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
+	},
+	"dependencies": {
+		"@types/mailparser": "^3.4.6",
+		"@types/smtp-server": "^3.5.10",
+		"mailparser": "^3.7.4",
+		"smtp-server": "^3.14.0"
 	}
 }
